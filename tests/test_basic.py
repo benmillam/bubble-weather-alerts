@@ -21,7 +21,7 @@ class TestLocationClass(unittest.TestCase):
         
     def test_get_long_lat_from_zip(self):
         loc = bubble_weather_alerts.helpers.Location()
-        self.assertEqual(loc.getLongLat(),(38.5474853158191, -121.738295534409)) #95616 long lat via https://nominatim.openstreetmap.org/ (actually the website truncates some digits so you ended up pasting the full method result into the test later
+        self.assertEqual(loc.getLongLat(),(38.547485, -121.738295)) #95616 long lat via https://nominatim.openstreetmap.org/ (actually the website truncates some digits so you ended up pasting the full method result into the test later
         
     def test_need_call_getLongLat_to_set_attributes(self):
         loc = bubble_weather_alerts.helpers.Location()
@@ -30,7 +30,7 @@ class TestLocationClass(unittest.TestCase):
     def test_getLongLat_sets_long_lat_attributes(self):
         loc = bubble_weather_alerts.helpers.Location()
         loc.getLongLat()
-        self.assertEqual((loc.lat,loc.long),(38.5474853158191, -121.738295534409)) #hrmm test isn't independent?
+        self.assertEqual((loc.lat,loc.long),(38.547485, -121.738295)) #hrmm test isn't independent?
         
 class TestWeatherClass(unittest.TestCase):
     """Basic test cases."""
@@ -47,6 +47,12 @@ class TestWeatherClass(unittest.TestCase):
         weather = bubble_weather_alerts.helpers.Weather(historyDays = 7)
         self.assertEqual(len(weather.days_api_format),7)
         self.assertEqual(len(weather.days_api_format[0]),10) #e.g. 2019-07-06, weak but moving on
+    
+    def test_getDayData_returns_API_data(self):
+        weather = bubble_weather_alerts.helpers.Weather(95618)
+        
+        data = weather.getDayData("2019-08-24")
+        assert(data)
     
     def test_getHistory_sets_lists(self):
         weather = bubble_weather_alerts.helpers.Weather()
