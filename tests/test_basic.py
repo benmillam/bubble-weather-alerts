@@ -52,10 +52,10 @@ class TestWeatherClass(unittest.TestCase):
         weather = bubble_weather_alerts.helpers.Weather()
         self.assertEqual(weather.API.__class__.__name__, 'API')
 
-    def test_getForecast_returns_API_data(self):
+    def test_getForecast_returns_API_data_dict(self):
         weather = bubble_weather_alerts.helpers.Weather(95618)
-        weather.getForecast()
-        assert(weather.forecast)
+        weather.getForecast() #sets .forecast property
+        assert('latitude' in weather.forecast) #limited coverage here, unexplored edge cases in terms of what API might return unexpectedly
 
     def test_where_left_off(self):
         #getDayData returns a historical day's weather data, need look through and determine exactly what we'll store like per the next test

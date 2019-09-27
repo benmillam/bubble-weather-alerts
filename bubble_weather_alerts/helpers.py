@@ -76,25 +76,35 @@ class API():
 
     def getData(self, location, day = None, forecast = False):
         import requests
+        from requests.exceptions import HTTPError
         if (forecast):
-            url = self.endpoint + self.key + '/' + str(location['lat']) + ',' + str(location['long']) + ',' + self.api_exclude
+            url = self.endpoint + self.key + '/' + str(location['lat']) + ',' + str(location['long']) + self.api_exclude
         else:
             from datetime import datetime
             if (day is None):
                 day = datetime.now().strftime("%Y-%m-%d")      #[YYYY]-[MM]-[DD]T[HH]:[MM]:[SS]
             url = self.endpoint + self.key + '/' + str(location['lat']) + ',' + str(location['long']) + ',' + day + self.api_time + self.api_exclude
 
-        maxtries = 3
         tries = 0
+        maxtries = 3
+        response = None
         while True:
             try:
                 response = requests.get(url)
-                response.raise_for_status()
-                print('Hey what is happening here endless loop...')
+                response.raise_for_status() #raise exception if unsuccessful request
+                print(f'Getting API data using attempt {tries + 1} of {maxtries}')
+                return response.json()
                 break
-            except:
+            #exception pattern via https://realpython.com/python-requests/
+            except HTTPError as http_err:
+                print(f'HTTP error occurred: {http_err}')
                 tries += 1
                 if (tries == maxtries):
                     return None
                 continue
-        return response.json()
+            except Exception as err: #pattern via https://realpython.com/python-requests/
+                print(f'Other error occurred: {err}')
+                tries += 1
+                if (tries == maxtries):
+                    return None
+                continue
